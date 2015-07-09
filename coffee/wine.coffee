@@ -55,7 +55,7 @@ syncViewModel = (scope, $obj, str) ->
                 _name = getBindStr str
                 # 调用validate actions
                 if scope.validateActions[_name]
-                    scope.validateActions[_name].call scope,_name
+                    scope.validateActions[_name].call scope, _name
 
                 # 调用bindAction绑定的函数
                 if scope.actions[_name]
@@ -76,7 +76,7 @@ validateSingle = (k, v, data, context, elements) ->
     if (k.indexOf('$') >= 0)
         _k = k.replace(/\$/g,'\\d+').replace(/\./g,'\\.')
         _reg = new RegExp(_k)
-        for item,key in elements
+        for key,item of elements
             if _reg.test(key) && !validateSingle(key, v, data, context, item)
                 return false
         return true
@@ -135,11 +135,8 @@ class Wine
         changeBind.call @
     
     # 模版设置
-    setTemplate: (option) ->
-        if option.text
-            @template = new EJS {text: option.text}
-        else if option.url
-            @template = new EJS {url: option.url}
+    setTemplate: (text) ->
+        @template = text
         @
     
     # 验证规则设置 {name:'tag name', rule:/\d/, checked:false, success:fn, fail:fn}
@@ -231,7 +228,7 @@ class Wine
             # ...
         # 渲染之前先给wine-bind元素赋值
         $div = $('<div></div>')
-        $div.html @template.render @data
+        $div.html ejs.render(@template,@data)
         valueBindElements $div,self.data
         @parent.empty().append $div.children()        
         _elements = self.bindElements = {}
